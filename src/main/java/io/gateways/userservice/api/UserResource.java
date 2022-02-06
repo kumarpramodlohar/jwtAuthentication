@@ -1,7 +1,6 @@
 package io.gateways.userservice.api;
 
 import java.io.IOException;
-
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -18,8 +17,8 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-
 import org.springframework.util.MimeTypeUtils;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -36,10 +35,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import io.gateways.userservice.domain.Role;
 import io.gateways.userservice.domain.User;
-
 import io.gateways.userservice.service.UserService;
 import lombok.Data;
 
+@CrossOrigin(origins = "http://localhost:4200")
 @RestController
 @RequestMapping("/api")
 
@@ -50,6 +49,12 @@ public class UserResource {
 	@Autowired
 	private UserService userService;
 
+	@GetMapping("/test")
+	public String apiTest() {
+		System.out.println("In test api");
+		return "connected";
+	}
+	
 	@GetMapping("/users")
 	public ResponseEntity<List<User>> getUsers() {
 

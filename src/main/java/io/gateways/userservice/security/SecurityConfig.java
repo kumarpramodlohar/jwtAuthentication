@@ -42,10 +42,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 		
 		CustomeAuthenticationFilter customeAuthenticationFilter=new CustomeAuthenticationFilter(authenticationManagerBean());
 		customeAuthenticationFilter.setFilterProcessesUrl("/api/login");
+		//customeAuthenticationFilter.setFilterProcessesUrl("/api/test");
 		
 		http.csrf().disable();
 		http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
-		http.authorizeRequests().antMatchers("/api/login/**","/api/token/refresh/**").permitAll();
+		http.authorizeRequests().antMatchers("/api/login/**","/api/token/refresh/**","/api/test/**").permitAll();
 		http.authorizeRequests().antMatchers(HttpMethod.GET,"/api/users/**").hasAnyAuthority("ROLE_USER");
 		http.authorizeRequests().antMatchers(HttpMethod.POST,"/api/user/save/**").hasAnyAuthority("ROLE_ADMIN");
 		http.authorizeRequests().anyRequest().authenticated();
