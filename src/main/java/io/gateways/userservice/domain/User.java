@@ -9,45 +9,35 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
+
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 
-
-
 @Entity
-/*
- * @Data
- * 
- * @NoArgsConstructor
- * 
- * @AllArgsConstructor
- */
-@Table(name="user") 
-public class User implements Serializable{
-	
-	 private static final long serialVersionUID = 471512149777116797L;
+@Table(name = "user")
+public class User implements Serializable {
+
+	private static final long serialVersionUID = 471512149777116797L;
 
 	@Id
-	@GeneratedValue(strategy=GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Long id;
-	
-	private String name;
-	
-	private String username;
-	
-	private String password;
-	
-	@ManyToMany(fetch= FetchType.EAGER)
-	//@JoinTable(	name = "user_roles", 
-	//joinColumns = @JoinColumn(name = "user_id"), 
-	//inverseJoinColumns = @JoinColumn(name = "role_id"))
-	private Collection<Role> roles=new ArrayList<>();
 
-	
-	public User() {}
-	
+	private String name;
+
+	private String username;
+
+	private String password;
+
+	@ManyToMany(fetch = FetchType.EAGER)
+	// @JoinTable( name = "user_roles",
+	// joinColumns = @JoinColumn(name = "user_id"),
+	// inverseJoinColumns = @JoinColumn(name = "role_id"))
+	private Collection<Role> roles = new ArrayList<>();
+
+	public User() {
+	}
+
 	public Long getId() {
 		return id;
 	}
@@ -102,7 +92,5 @@ public class User implements Serializable{
 		return "User [id=" + id + ", name=" + name + ", username=" + username + ", password=" + password + ", roles="
 				+ roles + "]";
 	}
-	
-	
-	
+
 }

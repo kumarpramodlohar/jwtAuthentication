@@ -1,9 +1,5 @@
 package io.gateways.userservice.filter;
 
-
-
-
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -32,64 +28,57 @@ import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import io.gateways.userservice.service.UserServiceImpl;
-import lombok.extern.slf4j.Slf4j;
-
-@Slf4j
 public class CustomAuthorizationFilter extends OncePerRequestFilter {
 
-	 private static final Logger log = LoggerFactory.getLogger(CustomAuthorizationFilter.class);
+	private static final Logger log = LoggerFactory.getLogger(CustomAuthorizationFilter.class);
+
 	@Override
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
 			throws ServletException, IOException {
-		
-		if(request.getServletPath().equals("/api/login") || request.getServletPath().equals("/api/token/refresh")) {
+
+		if (request.getServletPath().equals("/api/login") || request.getServletPath().equals("/api/token/refresh")) {
 			filterChain.doFilter(request, response);
 			System.out.println("in true part");
 		} else {
 			System.out.println("in else part");
 			String authorizationHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
-			//log.info("Authorization header is ",request.getHeader(HttpHeaders.AUTHORIZATION));
-			System.out.println("Authorization header is "+ request.getHeader(HttpHeaders.AUTHORIZATION));
-			if(authorizationHeader !=null && authorizationHeader.startsWith("Bearer ")) {
+			System.out.println("Authorization header is " + request.getHeader(HttpHeaders.AUTHORIZATION));
+			if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
 				try {
 					String token = authorizationHeader.substring("Bearer ".length());
-					
-					Algorithm algorithm= Algorithm.HMAC256("secret".getBytes());
+
+					Algorithm algorithm = Algorithm.HMAC256("secret".getBytes());
 					JWTVerifier verifier = JWT.require(algorithm).build();
-					DecodedJWT decodedJWT=verifier.verify(token);
-					String username=decodedJWT.getSubject();
-					log.info("User Name",username);
-					String[] roles=decodedJWT.getClaim("roles").asArray(String.class);
-					log.info("Roles is ", roles);
+					DecodedJWT decodedJWT = verifier.verify(token);
+					String username = decodedJWT.getSubject();
+					log.info("User Name", username);
+					String[] roles = decodedJWT.getClaim("roles").asArray(String.class);
+
 					Collection<SimpleGrantedAuthority> authorities = new ArrayList<>();
 					Arrays.stream(roles).forEach(role -> {
 						authorities.add(new SimpleGrantedAuthority(role));
 					});
-					
-					UsernamePasswordAuthenticationToken authenticationToken= new UsernamePasswordAuthenticationToken
-							(username,null,authorities);
+
+					UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
+							username, null, authorities);
 					SecurityContextHolder.getContext().setAuthentication(authenticationToken);
 					filterChain.doFilter(request, response);
-					
-				}catch(Exception exception) {
+
+				} catch (Exception exception) {
 					log.error("Error loggin in: {} ", exception.getMessage());
 					response.setHeader("error", exception.getMessage());
 					response.setStatus(HttpStatus.FORBIDDEN.value());
-					//response.sendError(HttpStatus.FORBIDDEN.value());
-					
-				
-					Map<String, String> error = new HashMap<> ();
-					
+					// response.sendError(HttpStatus.FORBIDDEN.value());
+
+					Map<String, String> error = new HashMap<>();
+
 					error.put("error_message", exception.getMessage());
-				
-					
+
 					response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-					
-					new ObjectMapper().writeValue(response.getOutputStream(),error);
+
+					new ObjectMapper().writeValue(response.getOutputStream(), error);
 				}
-				
-				
+
 			} else {
 				filterChain.doFilter(request, response);
 			}

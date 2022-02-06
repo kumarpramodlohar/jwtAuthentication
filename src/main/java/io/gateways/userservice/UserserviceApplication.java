@@ -8,30 +8,23 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
-
 import io.gateways.userservice.domain.Role;
 import io.gateways.userservice.domain.User;
 import io.gateways.userservice.service.UserService;
 
+@SpringBootApplication
 
-@SpringBootApplication 
-
-public class UserserviceApplication  {
-
-
+public class UserserviceApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(UserserviceApplication.class, args);
 	}
 
-	
 	@Bean
 	BCryptPasswordEncoder passwordEncoder() {
 		return new BCryptPasswordEncoder();
 	}
-	
-	
-	
+
 	@Bean
 	CommandLineRunner run(UserService userService) {
 		return args -> {
@@ -43,8 +36,7 @@ public class UserserviceApplication  {
 			userService.saveUser(new User(null, "Pramod Lohar", "pramod", "pramod1234", new ArrayList<>()));
 			userService.saveUser(new User(null, "Subhamay Mondal", "subhamay", "subhamay1234", new ArrayList<>()));
 			userService.saveUser(new User(null, "Avishto Banerjee", "avishto", "avistho1234", new ArrayList<>()));
-			userService.saveUser(
-					new User(null, "ShibShankar Pradhan", "shibShankar", "shibShankar1234", new ArrayList<>()));
+			userService.saveUser(new User(null, "ShibShankar Pradhan", "shibShankar", "shibShankar1234", new ArrayList<>()));
 
 			userService.addRoleToUser("pramod", "ROLE_USER");
 			userService.addRoleToUser("shibShankar", "ROLE_MANAGER");
@@ -55,7 +47,5 @@ public class UserserviceApplication  {
 
 		};
 	}
-
-
 
 }
