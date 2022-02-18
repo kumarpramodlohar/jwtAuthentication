@@ -38,7 +38,7 @@ import io.gateways.userservice.domain.User;
 import io.gateways.userservice.service.UserService;
 import lombok.Data;
 
-@CrossOrigin(origins = "http://localhost:4200")
+@CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("/api")
 
