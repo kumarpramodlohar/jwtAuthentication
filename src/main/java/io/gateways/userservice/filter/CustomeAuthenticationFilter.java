@@ -47,7 +47,6 @@ public class CustomeAuthenticationFilter extends UsernamePasswordAuthenticationF
 
 		// we can use Object Mapper here for JSON formatter
 
-	
 		log.info("Username is: {} ", username);
 		log.info("Password is: {} ", password);
 

@@ -49,7 +49,6 @@ public class UserserviceApplication {
 
 		};
 	}
-	
 	@Bean
 	public WebMvcConfigurer corsConfigurer() {
 		return new WebMvcConfigurer() {
@@ -59,5 +58,6 @@ public class UserserviceApplication {
 			}
 		};
 	}
+
 
 }

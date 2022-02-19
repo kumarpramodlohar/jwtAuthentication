@@ -1,6 +1,7 @@
 package io.gateways.userservice.service;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collection;
 import java.util.List;
 
@@ -16,9 +17,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import io.gateways.userservice.domain.Role;
+import io.gateways.userservice.domain.SerialUpdate;
 import io.gateways.userservice.domain.User;
 import io.gateways.userservice.repo.RoleRepo;
+import io.gateways.userservice.repo.SerialUpdateRepo;
 import io.gateways.userservice.repo.UserRepo;
+import io.gateways.userservice.repo.UserdetailsRepo;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -32,6 +36,12 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
 	@Autowired
 	private RoleRepo roleRepo;
+	
+	@Autowired
+	private UserdetailsRepo userdetailsrepo;
+	
+	@Autowired
+	private SerialUpdateRepo serialUpdateRepo;
 
 	@Autowired
 	private BCryptPasswordEncoder passwordEncoder;
@@ -103,6 +113,25 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 		log.info("Fetching All users {} ");
 
 		return userRepo.findAll();
+	}
+
+	@Override
+	public io.gateways.userservice.domain.UserDetails registrationSave(
+			io.gateways.userservice.domain.UserDetails userdetails) {
+		
+		Calendar cal=Calendar.getInstance();
+		int yr=cal.get(Calendar.YEAR);
+		int mth=cal.get(Calendar.MONTH);
+		int dt=cal.get(Calendar.DATE);
+		
+		Integer serialNo=serialUpdateRepo.getserial("user");
+		
+		
+		log.info("serialNo............................",serialNo);
+		
+		
+		
+		return userdetailsrepo.save(userdetails);
 	}
 
 }

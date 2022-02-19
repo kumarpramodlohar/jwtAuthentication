@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.auth0.jwt.JWT;
@@ -34,7 +35,9 @@ import com.fasterxml.jackson.databind.DatabindException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import io.gateways.userservice.domain.Role;
+import io.gateways.userservice.domain.SerialUpdate;
 import io.gateways.userservice.domain.User;
+import io.gateways.userservice.domain.UserDetails;
 import io.gateways.userservice.service.UserService;
 import lombok.Data;
 
@@ -42,7 +45,7 @@ import lombok.Data;
 @RestController
 @RequestMapping("/api")
 
-public class UserResource {
+public class UserResource extends Exception {
 
 	private static final Logger log = LoggerFactory.getLogger(UserResource.class);
 
@@ -88,6 +91,20 @@ public class UserResource {
 		userService.addRoleToUser(form.getUsername(), form.getRoleName());
 
 		return ResponseEntity.ok().build();
+	}
+	
+	@PostMapping("/registration/save")
+	public ResponseEntity<?> registrationSave(@RequestBody UserDetails userdetails
+			) {
+
+		// URI
+		// uri=URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/api/user/save").toUriString());
+
+		// return ResponseEntity.created(uri).body(userService.saveUser(user));
+		
+		System.out.println("Hiiiiiiii...................");
+
+		return ResponseEntity.ok().body(userService.registrationSave(userdetails));
 	}
 
 	@GetMapping("/token/refresh")

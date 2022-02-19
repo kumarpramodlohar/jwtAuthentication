@@ -36,18 +36,15 @@ public class CustomAuthorizationFilter extends OncePerRequestFilter {
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
 			throws ServletException, IOException {
 
-		if (request.getServletPath().equals("/api/login") || request.getServletPath().equals("/api/token/refresh") || request.getServletPath().equals("/api/test")) {
-			 	response.setHeader("Access-Control-Allow-Origin", "*");
-			    response.setHeader("Access-Control-Allow-Credentials", "true");
-			    response.setHeader("Access-Control-Allow-Methods", "POST, GET, OPTIONS, DELETE");
-			    response.setHeader("Access-Control-Max-Age", "3600");
-			    response.setHeader("Access-Control-Allow-Headers", "Content-Type, Accept, X-Requested-With, remember-me");
-			    
-			    System.out.println("=========" + response.getStatus());
-			   // If(response.getStatus())
+		if (request.getServletPath().equals("/api/login") || request.getServletPath().equals("/api/token/refresh") || request.getServletPath().equals("/api/test") || request.getServletPath().equals("/api/registration/save")) {
+			response.setHeader("Access-Control-Allow-Origin", "*");
+		    response.setHeader("Access-Control-Allow-Credentials", "true");
+		    response.setHeader("Access-Control-Allow-Methods", "POST, GET, OPTIONS, DELETE");
+		    response.setHeader("Access-Control-Max-Age", "3600");
+		    response.setHeader("Access-Control-Allow-Headers", "Content-Type, Accept, X-Requested-With, remember-me");
 			
 			filterChain.doFilter(request, response);
-		
+			System.out.println("in true part");
 		} else {
 			System.out.println("in else part");
 			String authorizationHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
