@@ -37,6 +37,7 @@ public class CustomAuthorizationFilter extends OncePerRequestFilter {
 			throws ServletException, IOException {
 
 		if (request.getServletPath().equals("/api/login") || request.getServletPath().equals("/api/token/refresh") || request.getServletPath().equals("/api/test") || request.getServletPath().equals("/api/registration/save")) {
+			
 			response.setHeader("Access-Control-Allow-Origin", "*");
 		    response.setHeader("Access-Control-Allow-Credentials", "true");
 		    response.setHeader("Access-Control-Allow-Methods", "POST, GET, OPTIONS, DELETE");

@@ -32,7 +32,7 @@ public class UserDetails implements Serializable{
 	private String pin;
 	private Date dob; 
 	private String mobile;
-	private String status;
+	private String status = "Y";
 	public int getId() {
 		return id;
 	}

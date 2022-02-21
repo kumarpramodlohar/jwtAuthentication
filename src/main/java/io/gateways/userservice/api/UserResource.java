@@ -106,6 +106,20 @@ public class UserResource extends Exception {
 
 		return ResponseEntity.ok().body(userService.registrationSave(userdetails));
 	}
+	
+	@PostMapping("/signup")
+	public ResponseEntity<?> signup(@RequestBody User user
+			) {
+
+		// URI
+		// uri=URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/api/user/save").toUriString());
+
+		// return ResponseEntity.created(uri).body(userService.saveUser(user));
+		
+		System.out.println("Hiiiiiiii...................");
+
+		return ResponseEntity.ok().body(userService.signup(user));
+	}
 
 	@GetMapping("/token/refresh")
 	public void refreshToken(HttpServletRequest request, HttpServletResponse response)

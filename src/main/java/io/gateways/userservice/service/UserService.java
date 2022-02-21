@@ -21,7 +21,7 @@ public interface UserService {
 
 	UserDetails registrationSave(UserDetails userdetails);
 
-
+	String signup(User user);
 	
 
 }

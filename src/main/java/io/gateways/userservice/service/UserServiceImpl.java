@@ -119,19 +119,83 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 	public io.gateways.userservice.domain.UserDetails registrationSave(
 			io.gateways.userservice.domain.UserDetails userdetails) {
 		
+		//Remove client id and then make sure that the user logged in client id get submitted
+		
+		String client_id=null;
+		Integer sl_no=0;
 		Calendar cal=Calendar.getInstance();
-		int yr=cal.get(Calendar.YEAR);
-		int mth=cal.get(Calendar.MONTH);
-		int dt=cal.get(Calendar.DATE);
+		String yr=Integer.toString(cal.get(Calendar.YEAR));
+		String mth=Integer.toString(cal.get(Calendar.MONTH)+1);
+		String dt=Integer.toString(cal.get(Calendar.DATE));
 		
-		Integer serialNo=serialUpdateRepo.getserial("user");
+		sl_no=serialUpdateRepo.getSerial("user");
+		sl_no++;
+		client_id=yr+""+mth+""+dt+""+Integer.toString(sl_no);
+		serialUpdateRepo.updateSerial("user",sl_no);
+		
+		log.info("Client id is ........................................"+client_id);
+		log.info("serialNo............................",sl_no);
 		
 		
-		log.info("serialNo............................",serialNo);
-		
-		
-		
+		userdetails.setClient_id(client_id);
 		return userdetailsrepo.save(userdetails);
+	}
+	
+	@Override
+	public String signup(User user) {
+		
+		String response = "";
+		
+		String client_id=null;
+		Integer sl_no=0;
+		Calendar cal=Calendar.getInstance();
+		
+		String yr=Integer.toString(cal.get(Calendar.YEAR));
+		String mth=Integer.toString(cal.get(Calendar.MONTH)+1);
+		String dt=Integer.toString(cal.get(Calendar.DATE));
+		
+		 sl_no=serialUpdateRepo.getSerial("user");
+		sl_no++;
+		 client_id=yr+""+mth+""+dt+""+Integer.toString(sl_no);
+		 
+		serialUpdateRepo.updateSerial("user",sl_no);
+		
+		user.setClient_id(client_id);
+		
+		User local = null;
+		
+//		System.out.println("User details ==============="+user.getName());
+//		System.out.println("User details ==============="+user.getUsername());
+//		System.out.println("User details ==============="+user.getPassword());
+		
+		local = userRepo.findByUsername(user.getUsername());
+		
+//		System.out.println("User details ==============="+local.getName());
+//		System.out.println("User details ==============="+local.getUsername());
+//		System.out.println("User details ==============="+local.getPassword());
+		
+//		
+		if(local != null) {
+			
+			response = "User Already Exists";
+		}else {
+			ArrayList<Role> roles = new ArrayList<Role>();
+				user.setRoles(roles);
+			userRepo.save(user);
+			User localUser = userRepo.findByUsername(user.getUsername());
+			System.out.println("User details ==============="+localUser.getName());
+			System.out.println("User details ==============="+localUser.getUsername());
+			System.out.println("User details ==============="+localUser.getPassword());
+			Role role = new Role();role.setName("Role User");
+			localUser.getRoles().add(role);
+			
+			response = "User Addition successfull";
+		}
+		
+		
+//		response = "True";
+		
+		return response;
 	}
 
 }
