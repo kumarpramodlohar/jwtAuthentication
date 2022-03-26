@@ -27,6 +27,7 @@ public class ApiCalls {
 	String apiUrl = "https://Openapi.5paisa.com/VendorsAPI/Service1.svc/";
 	String loginCheckUrl ="https://openfeed.5paisa.com/Feeds/api/UserActivity/";
 	String wssUrl ="wss://openfeed.5paisa.com/Feeds/api/chat?Value1=";
+	String historical_url = "https://openapi.5paisa.com/historical/";
 	String ASPXAUTH_Cookie;
     final String FIVE_PAISA_COOKIE="5paisacookie";
 	final String JWT_TOKEN="JwtToken";
@@ -152,11 +153,11 @@ public class ApiCalls {
 
 	public Response apiCallWithCookies(String suburl, JSONObject reqbody) throws IOException, ParseException {
 		String cookie = readFile();
-		System.out.println("cookie:====="+cookie);
+		//System.out.println("cookie:====="+cookie);
 		OkHttpClient client = new OkHttpClient();
 		String url = apiUrl + suburl;
-		System.out.println("\n Url >> " + url);
-		System.out.println("\n Request >> " + reqbody);
+		//System.out.println("\n Url >> " + url);
+		//System.out.println("\n Request >> " + reqbody);
 		RequestBody body = RequestBody.create(JSON, reqbody.toJSONString());
 		Request request = new Request.Builder().url(url)
 				.addHeader("Cookie", "5paisacookie=" + cookie).post(body).build();

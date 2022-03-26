@@ -5,6 +5,9 @@ import java.util.Calendar;
 import java.util.Collection;
 import java.util.List;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,12 +20,16 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import io.gateways.userservice.domain.Role;
-import io.gateways.userservice.domain.SerialUpdate;
+import io.gateways.userservice.domain.StockDetails;
 import io.gateways.userservice.domain.User;
+import io.gateways.userservice.domain.Wallet;
+import io.gateways.userservice.domain.WatchlistBean;
 import io.gateways.userservice.repo.RoleRepo;
 import io.gateways.userservice.repo.SerialUpdateRepo;
 import io.gateways.userservice.repo.UserRepo;
 import io.gateways.userservice.repo.UserdetailsRepo;
+import io.gateways.userservice.repo.WalletRepo;
+import io.gateways.userservice.repo.WatchlistRepo;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -40,11 +47,21 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 	@Autowired
 	private UserdetailsRepo userdetailsrepo;
 	
+	
 	@Autowired
 	private SerialUpdateRepo serialUpdateRepo;
 
 	@Autowired
 	private BCryptPasswordEncoder passwordEncoder;
+	
+	@Autowired
+	private WalletRepo walletRepo;
+	
+	@PersistenceContext
+	private EntityManager em;
+	
+	@Autowired
+	private WatchlistRepo watchlistRepo;
 
 	private static final Logger log = LoggerFactory.getLogger(UserServiceImpl.class);
 
@@ -161,31 +178,38 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 		serialUpdateRepo.updateSerial("user",sl_no);
 		
 		user.setClient_id(client_id);
-		
+		user.setStatus("Y");
 		User local = null;
 		
-//		System.out.println("User details ==============="+user.getName());
-//		System.out.println("User details ==============="+user.getUsername());
-//		System.out.println("User details ==============="+user.getPassword());
+
 		
 		local = userRepo.findByUsername(user.getUsername());
 		
-//		System.out.println("User details ==============="+local.getName());
-//		System.out.println("User details ==============="+local.getUsername());
-//		System.out.println("User details ==============="+local.getPassword());
+
 		
-//		
+		
 		if(local != null) {
 			
-			response = "User Already Exists";
+			response = "Failed";
 		}else {
+			user.setPassword(passwordEncoder.encode(user.getPassword()));
+			
 			ArrayList<Role> roles = new ArrayList<Role>();
 				user.setRoles(roles);
 			userRepo.save(user);
+			
+			Wallet userwallet = new Wallet();
+			
+			
 			User localUser = userRepo.findByUsername(user.getUsername());
 			System.out.println("User details ==============="+localUser.getName());
 			System.out.println("User details ==============="+localUser.getUsername());
 			System.out.println("User details ==============="+localUser.getPassword());
+			userwallet.setUsername(localUser.getUsername());
+			userwallet.setBalance(20000);
+			userwallet.setClient_id(client_id);
+			walletRepo.save(userwallet);
+			
 			Role role = new Role();role.setName("Role User");
 			localUser.getRoles().add(role);
 			
@@ -193,9 +217,41 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 		}
 		
 		
-//		response = "True";
+
 		
 		return response;
+	}
+	
+	@Override
+	public List<StockDetails> getWatchlist(String username) {
+		
+		List<StockDetails> list = new ArrayList<StockDetails>();
+		list = em.createNativeQuery("select s.id,s.Exch,s.Exch_type,s.Symbol,s.Strike_price,s.Option_type,s.Expiry from onlinetradingdb.stock_details s join onlinetradingdb.user_watchlist u on u.symbol = s.Symbol where u.username = '"+username+"'",StockDetails.class).getResultList();
+		
+		return list;
+	}
+	
+	@Override
+	public String addWatchlist(WatchlistBean watchlistBean) {
+		// TODO Auto-generated method stub
+		watchlistBean.setStatus("Y");
+		watchlistRepo.save(watchlistBean);
+		return "success";
+	}
+
+	@Override
+	public void userDeactivate(String client_id) {
+		// TODO Auto-generated method stub
+		userRepo.userDeactivate(client_id);
+		
+	}
+	
+	@Override
+	public List<Wallet> getWallet(String username) {
+		// TODO Auto-generated method stub
+		log.info("Fetching user {} ", username);
+
+		return walletRepo.findByUsername(username);
 	}
 
 }

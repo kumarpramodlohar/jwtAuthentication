@@ -49,8 +49,15 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 		
 		http.cors().and().csrf().disable();
 		http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
-		http.authorizeRequests().antMatchers("/api/login/**","/api/registration/save/**","/api/token/refresh/**","/api/test/**","/api/signup/**").permitAll();
-		http.authorizeRequests().antMatchers(HttpMethod.GET,"/api/users/**").hasAnyAuthority("ROLE_USER");
+		http.authorizeRequests().antMatchers("/api/login/**","/api/registration/save/**","/api/token/refresh/**","/api/signup/**").permitAll();
+		http.authorizeRequests().antMatchers(HttpMethod.GET,"/api/users/**").hasAnyAuthority("ROLE_ADMIN");
+		http.authorizeRequests().antMatchers(HttpMethod.GET,"/live/market-feed/**").hasAnyAuthority("ROLE_USER");
+		http.authorizeRequests().antMatchers(HttpMethod.GET,"/live/stockName/**").hasAnyAuthority("ROLE_USER");
+		http.authorizeRequests().antMatchers(HttpMethod.GET,"/live/industry-feed/**").hasAnyAuthority("ROLE_USER");
+		http.authorizeRequests().antMatchers(HttpMethod.GET,"/api/getWatchlist/**").hasAnyAuthority("ROLE_USER");
+		http.authorizeRequests().antMatchers(HttpMethod.POST,"/api/addWatchlist/**").hasAnyAuthority("ROLE_USER","ROLE_ADMIN");
+		http.authorizeRequests().antMatchers(HttpMethod.GET,"/api/fetchWallet/**").hasAnyAuthority("ROLE_USER","ROLE_ADMIN");
+		http.authorizeRequests().antMatchers(HttpMethod.POST,"/registration/save/**").hasAnyAuthority("ROLE_ADMIN");
 		http.authorizeRequests().antMatchers(HttpMethod.POST,"/api/user/save/**").hasAnyAuthority("ROLE_ADMIN");
 		http.authorizeRequests().anyRequest().authenticated();
 		http.addFilter(customeAuthenticationFilter);

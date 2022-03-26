@@ -36,7 +36,7 @@ public class CustomAuthorizationFilter extends OncePerRequestFilter {
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
 			throws ServletException, IOException {
 
-		if (request.getServletPath().equals("/api/login") || request.getServletPath().equals("/api/token/refresh") || request.getServletPath().equals("/api/test") || request.getServletPath().equals("/api/registration/save")) {
+		if (request.getServletPath().equals("/api/login") || request.getServletPath().equals("/api/token/refresh") || request.getServletPath().equals("/api/test") || request.getServletPath().equals("/api/signup")) {
 			
 			response.setHeader("Access-Control-Allow-Origin", "*");
 		    response.setHeader("Access-Control-Allow-Credentials", "true");
@@ -45,11 +45,11 @@ public class CustomAuthorizationFilter extends OncePerRequestFilter {
 		    response.setHeader("Access-Control-Allow-Headers", "Content-Type, Accept, X-Requested-With, remember-me");
 			
 			filterChain.doFilter(request, response);
-			System.out.println("in true part");
+			//System.out.println("in true part");
 		} else {
-			System.out.println("in else part");
+			//System.out.println("in else part");
 			String authorizationHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
-			System.out.println("Authorization header is " + request.getHeader(HttpHeaders.AUTHORIZATION));
+			//System.out.println("Authorization header is " + request.getHeader(HttpHeaders.AUTHORIZATION));
 			if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
 				try {
 					String token = authorizationHeader.substring("Bearer ".length());
@@ -58,7 +58,7 @@ public class CustomAuthorizationFilter extends OncePerRequestFilter {
 					JWTVerifier verifier = JWT.require(algorithm).build();
 					DecodedJWT decodedJWT = verifier.verify(token);
 					String username = decodedJWT.getSubject();
-					log.info("User Name", username);
+					//log.info("User Name", username);
 					String[] roles = decodedJWT.getClaim("roles").asArray(String.class);
 
 					Collection<SimpleGrantedAuthority> authorities = new ArrayList<>();

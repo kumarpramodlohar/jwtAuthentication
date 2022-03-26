@@ -6,16 +6,18 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
+import org.springframework.scheduling.annotation.EnableAsync;
+import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
-import io.gateways.userservice.domain.Role;
 import io.gateways.userservice.domain.User;
 import io.gateways.userservice.service.UserService;
 
 @SpringBootApplication
-
+@EnableScheduling
+@EnableAsync
 public class UserserviceApplication {
 
 	public static void main(String[] args) {
@@ -27,13 +29,14 @@ public class UserserviceApplication {
 		return new BCryptPasswordEncoder();
 	}
 
+
+	
+
 //	@Bean
-//	CommandLineRunner run(UserService userService) {
-//		return args -> {
-//			userService.saveRole(new Role(null, "ROLE_USER"));
-//			userService.saveRole(new Role(null, "ROLE_MANAGER"));
-//			userService.saveRole(new Role(null, "ROLE_ADMIN"));
-//			userService.saveRole(new Role(null, "ROLE_SUPER_ADMIN"));
+	//CommandLineRunner run(UserService userService) {
+	//	return args -> {
+		//	userService.saveUser(new User(null,"Administrator","admin","admin","15678910","Y","admin","123456",new ArrayList<>()));
+		//	userService.addRoleToUser("admin", "ROLE_ADMIN");
 //
 //			userService.saveUser(new User(null, "Pramod Lohar", "pramod", "pramod1234", new ArrayList<>()));
 //			userService.saveUser(new User(null, "Subhamay Mondal", "subhamay", "subhamay1234", new ArrayList<>()));
@@ -47,8 +50,9 @@ public class UserserviceApplication {
 //			userService.addRoleToUser("avishto", "ROLE_ADMIN");
 //			userService.addRoleToUser("subhamay", "ROLE_USER");
 //
-//		};
-//	}
+	//	};
+	//}
+	
 	@Bean
 	public WebMvcConfigurer corsConfigurer() {
 		return new WebMvcConfigurer() {
@@ -58,6 +62,8 @@ public class UserserviceApplication {
 			}
 		};
 	}
+
+	
 
 
 }

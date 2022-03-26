@@ -24,7 +24,7 @@ public class RestClient {
 	private String smoOrderRequest = "SMOOrderRequest";
 	private String modifySmoOrder = "5PSModMOOrd";
 	private String loginCheck = "LoginCheck";
-	
+	private String historical = "https://openapi.5paisa.com/historical";
 	
 	JSONParser parser = new JSONParser();
 	ApiCalls ac = new ApiCalls();

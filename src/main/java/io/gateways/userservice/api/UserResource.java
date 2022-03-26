@@ -20,10 +20,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.util.MimeTypeUtils;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.auth0.jwt.JWT;
@@ -35,9 +36,12 @@ import com.fasterxml.jackson.databind.DatabindException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import io.gateways.userservice.domain.Role;
-import io.gateways.userservice.domain.SerialUpdate;
+import io.gateways.userservice.domain.StockDetails;
 import io.gateways.userservice.domain.User;
 import io.gateways.userservice.domain.UserDetails;
+import io.gateways.userservice.domain.Wallet;
+import io.gateways.userservice.domain.WatchlistBean;
+import io.gateways.userservice.service.MarketFeedService;
 import io.gateways.userservice.service.UserService;
 import lombok.Data;
 
@@ -52,6 +56,9 @@ public class UserResource extends Exception {
 	@Autowired
 	private UserService userService;
 
+	@Autowired
+	private MarketFeedService marketFeedService;
+	
 	@GetMapping("/test")
 	public String apiTest() {
 		System.out.println("In test api");
@@ -120,6 +127,16 @@ public class UserResource extends Exception {
 
 		return ResponseEntity.ok().body(userService.signup(user));
 	}
+	
+	
+	@PostMapping("/addWatchlist")
+	public String addWatchlist(@RequestBody WatchlistBean watchlistBean) {		
+		System.out.println("Hiiiiii222222...................");
+		
+		userService.addWatchlist(watchlistBean);
+		
+		return "Success";
+	}
 
 	@GetMapping("/token/refresh")
 	public void refreshToken(HttpServletRequest request, HttpServletResponse response)
@@ -173,9 +190,30 @@ public class UserResource extends Exception {
 			throw new RuntimeException("Refresh token is missing");
 		}
 	}
+	
+	
+	@PutMapping("/userDeactivate/{client_id}")
+	public void userDeactivate(@PathVariable("client_id") String client_id){
+		 userService.userDeactivate(client_id);
+	}
 
 	public static Logger getLog() {
 		return log;
+	}
+	
+	
+	@GetMapping("/getWatchlist/{username}")
+	public String getWatchlist(@PathVariable("username")String username) {
+		//System.out.println("Watchlist Fetching");
+		List<StockDetails> std = userService.getWatchlist(username);
+		
+		return marketFeedService.getLiveData(std);
+	}
+	
+	@GetMapping("/fetchWallet/{username}")
+	public ResponseEntity<List<Wallet>> getWallet(@PathVariable("username")String username) {
+
+		return ResponseEntity.ok().body(userService.getWallet(username));
 	}
 
 }
