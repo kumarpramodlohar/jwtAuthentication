@@ -226,7 +226,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 	public List<StockDetails> getWatchlist(String username) {
 		
 		List<StockDetails> list = new ArrayList<StockDetails>();
-		list = em.createNativeQuery("select s.id,s.Exch,s.Exch_type,s.Symbol,s.Strike_price,s.Option_type,s.Expiry from onlinetradingdb.stock_details s join onlinetradingdb.user_watchlist u on u.symbol = s.Symbol where u.username = '"+username+"'",StockDetails.class).getResultList();
+		list = em.createNativeQuery("select s.id,s.Exch,s.ExchType,s.Symbol,s.StrikePrice,s.OptionType,s.Expiry from onlinetradingdb.stock_details s join onlinetradingdb.user_watchlist u on u.symbol = s.Symbol where u.username = '"+username+"'",StockDetails.class).getResultList();
 		
 		return list;
 	}

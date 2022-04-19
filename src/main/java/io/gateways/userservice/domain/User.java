@@ -45,7 +45,7 @@ public class User implements Serializable {
 	private String college_name;
 	private String mobile_no;
 	
-	
+	private String email;
 	
 	@ManyToMany(fetch = FetchType.EAGER,cascade = CascadeType.ALL)
 	// @JoinTable( name = "user_roles",

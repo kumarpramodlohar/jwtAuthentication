@@ -1,25 +1,19 @@
 package io.gateways.userservice;
-
-
-import java.io.File;
-import java.io.IOException;
-
-import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
-import io.gateways.userservice.service.UserService;
-
 
 @SpringBootApplication
 @EnableScheduling
 @EnableAsync
+@PropertySource("classpath:application.properties")
 public class UserserviceApplication {
 
 	public static void main(String[] args) {
@@ -34,23 +28,23 @@ public class UserserviceApplication {
 
 	
 
-	@Bean
-	CommandLineRunner run(UserService userService) {
-		return args -> {
-			try {
-			      File myObj = new File("cookie.txt");
-			      if (myObj.createNewFile()) {
-			        System.out.println("File created: " + myObj.getName());
-			      } else {
-			        System.out.println("File already exists.");
-			      }
-			    } catch (IOException e) {
-			      System.out.println("An error occurred.");
-			      e.printStackTrace();
-			    }
-
-		};
-	}
+//	@Bean
+//	CommandLineRunner run() {
+//		return args -> {
+//				try {
+//				      File myObj = new File("cookie.txt");
+//				      if (myObj.createNewFile()) {
+//				        System.out.println("File created: " + myObj.getName());
+//				      } else {
+//				        System.out.println("File already exists.");
+//				      }
+//				    } catch (IOException e) {
+//				      System.out.println("An error occurred.");
+//				      e.printStackTrace();
+//				    }
+//
+//		};
+//	}
 	
 	@Bean
 	public WebMvcConfigurer corsConfigurer() {
