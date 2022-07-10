@@ -15,4 +15,8 @@ public interface UserRepo extends JpaRepository<User, Long> {
 	@Modifying
 	@Query(value = "update User p set p.status = 'N' where  p.client_id= ?1",nativeQuery = true)
 	void userDeactivate (@Param("client_id") String client_id);
+
+	@Modifying
+	@Query(value = "update wallet w set w.status = 'Y' , w.balance=?2 where  w.client_id= ?1",nativeQuery = true)
+	void updateWallet(@Param("client_id")String client_id, @Param("balance")int balance);
 }

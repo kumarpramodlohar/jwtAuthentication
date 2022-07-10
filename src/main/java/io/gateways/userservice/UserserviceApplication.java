@@ -1,6 +1,7 @@
 package io.gateways.userservice;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.scheduling.annotation.EnableAsync;
@@ -14,7 +15,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @EnableScheduling
 @EnableAsync
 @PropertySource("classpath:application.properties")
-public class UserserviceApplication {
+public class UserserviceApplication  {
 
 	public static void main(String[] args) {
 		SpringApplication.run(UserserviceApplication.class, args);

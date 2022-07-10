@@ -1,6 +1,7 @@
 package io.gateways.userservice.domain;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -46,6 +47,8 @@ public class User implements Serializable {
 	private String mobile_no;
 	
 	private String email;
+	
+	private LocalDateTime created_on;
 	
 	@ManyToMany(fetch = FetchType.EAGER,cascade = CascadeType.ALL)
 	// @JoinTable( name = "user_roles",

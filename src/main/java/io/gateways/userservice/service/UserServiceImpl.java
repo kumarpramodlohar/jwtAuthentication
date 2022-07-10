@@ -1,8 +1,12 @@
 package io.gateways.userservice.service;
 
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 
 import javax.persistence.EntityManager;
@@ -19,13 +23,22 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import io.gateways.userservice.domain.Role;
+import io.gateways.userservice.domain.StockCodes;
 import io.gateways.userservice.domain.StockDetails;
+import io.gateways.userservice.domain.StockTransaction;
+import io.gateways.userservice.domain.StockTransactionSell;
 import io.gateways.userservice.domain.User;
 import io.gateways.userservice.domain.Wallet;
 import io.gateways.userservice.domain.WatchlistBean;
 import io.gateways.userservice.repo.RoleRepo;
 import io.gateways.userservice.repo.SerialUpdateRepo;
+import io.gateways.userservice.repo.StockCodesRepo;
+import io.gateways.userservice.repo.StockTransactionRepo;
+import io.gateways.userservice.repo.StockTransactionSellRepo;
 import io.gateways.userservice.repo.UserRepo;
 import io.gateways.userservice.repo.UserdetailsRepo;
 import io.gateways.userservice.repo.WalletRepo;
@@ -53,6 +66,8 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
 	@Autowired
 	private BCryptPasswordEncoder passwordEncoder;
+	@Autowired
+	private StockCodesRepo stockCodesRepo;
 	
 	@Autowired
 	private WalletRepo walletRepo;
@@ -63,6 +78,12 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 	@Autowired
 	private WatchlistRepo watchlistRepo;
 
+	@Autowired
+	private StockTransactionRepo stockTransactionRepo;
+	
+	@Autowired
+	private StockTransactionSellRepo stockTransactionSellRepo;
+	
 	private static final Logger log = LoggerFactory.getLogger(UserServiceImpl.class);
 
 	@Override
@@ -152,7 +173,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 		
 		log.info("Client id is ........................................"+client_id);
 		log.info("serialNo............................",sl_no);
-		
+
 		
 		userdetails.setClient_id(client_id);
 		return userdetailsrepo.save(userdetails);
@@ -172,11 +193,13 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 		String dt=Integer.toString(cal.get(Calendar.DATE));
 		
 		 sl_no=serialUpdateRepo.getSerial("user");
-		sl_no++;
+		 sl_no++;
 		 client_id=yr+""+mth+""+dt+""+Integer.toString(sl_no);
 		 
 		serialUpdateRepo.updateSerial("user",sl_no);
-		
+		long milliseconds = System.currentTimeMillis();
+		LocalDateTime Date = Instant.ofEpochMilli(milliseconds).atZone(ZoneId.systemDefault()).toLocalDateTime();
+		user.setCreated_on(Date);
 		user.setClient_id(client_id);
 		user.setStatus("Y");
 		User local = null;
@@ -194,8 +217,8 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 		}else {
 			user.setPassword(passwordEncoder.encode(user.getPassword()));
 			
-			ArrayList<Role> roles = new ArrayList<Role>();
-				user.setRoles(roles);
+			//ArrayList<Role> roles = new ArrayList<Role>();
+			//user.setRoles(roles);
 			userRepo.save(user);
 			
 			Wallet userwallet = new Wallet();
@@ -210,8 +233,16 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 			userwallet.setClient_id(client_id);
 			walletRepo.save(userwallet);
 			
-			Role role = new Role();role.setName("Role User");
-			localUser.getRoles().add(role);
+			Role role = new Role();
+			//role.setName("Role User");
+			if(user.getUsername().equals("admin")) {
+				role = roleRepo.findByName("ROLE_ADMIN");
+			}
+			else {
+				role = roleRepo.findByName("ROLE_USER");
+			}
+			
+			user.getRoles().add(role);
 			
 			response = "User Addition successfull";
 		}
@@ -253,5 +284,51 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
 		return walletRepo.findByUsername(username);
 	}
+
+	@Override
+	public void updateWallet(String client_id, int balance) {
+		// TODO Auto-generated method stub
+		System.out.println("client_id.............................."+client_id);
+		System.out.println("client_id.............................."+balance);
+		userRepo.updateWallet(client_id,balance);
+	}
+	 @Override
+		public List<StockTransaction> getBuydetails(String username) {
+			log.info("Fetching Buy Details user {} ", username);
+
+			return stockTransactionRepo.findBuydetailsByUsername(username);
+		}
+
+		@Override
+		public List<StockTransactionSell> getSelldetails(String username) {
+			log.info("Fetching Sell Details user {} ", username);
+
+			return stockTransactionSellRepo.findSelldetailsByUsername(username);
+		}
+
+		@Override
+		public String getPortfolio(String username) {
+			// TODO Auto-generated method stub
+			HashMap<String,Integer> map = new HashMap<String,Integer>();
+			
+			map.put("TotalBought", stockTransactionRepo.getTotalSpent(username));
+			map.put("TotalSold", stockTransactionSellRepo.getTotalSold(username));
+			String json = "";
+			try {
+				 json = new ObjectMapper().writeValueAsString(map);
+			} catch (JsonProcessingException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			return json;
+			
+			
+		}
+
+		@Override
+		public List<StockCodes> stockFetchData(String username) {
+			// TODO Auto-generated method stub
+			return stockCodesRepo.stockFetchData(username);
+		}
 
 }

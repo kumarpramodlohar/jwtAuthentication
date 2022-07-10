@@ -3,7 +3,10 @@ package io.gateways.userservice.service;
 import java.util.List;
 
 import io.gateways.userservice.domain.Role;
+import io.gateways.userservice.domain.StockCodes;
 import io.gateways.userservice.domain.StockDetails;
+import io.gateways.userservice.domain.StockTransaction;
+import io.gateways.userservice.domain.StockTransactionSell;
 import io.gateways.userservice.domain.User;
 import io.gateways.userservice.domain.UserDetails;
 import io.gateways.userservice.domain.Wallet;
@@ -32,5 +35,16 @@ public interface UserService {
 	List<StockDetails> getWatchlist(String username);
 
 	List<Wallet> getWallet(String username);
+
+	void updateWallet(String client_id, int balance);
+	
+	 List<StockTransaction> getBuydetails(String username);
+
+List<StockTransactionSell> getSelldetails(String username);
+
+String getPortfolio(String username);
+
+List<StockCodes> stockFetchData(String username);
+
 	
 }

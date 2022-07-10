@@ -36,11 +36,15 @@ import com.fasterxml.jackson.databind.DatabindException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import io.gateways.userservice.domain.Role;
+import io.gateways.userservice.domain.StockCodes;
 import io.gateways.userservice.domain.StockDetails;
+import io.gateways.userservice.domain.StockTransaction;
+import io.gateways.userservice.domain.StockTransactionSell;
 import io.gateways.userservice.domain.User;
 import io.gateways.userservice.domain.UserDetails;
 import io.gateways.userservice.domain.Wallet;
 import io.gateways.userservice.domain.WatchlistBean;
+import io.gateways.userservice.repo.StockCodesRepo;
 import io.gateways.userservice.service.MarketFeedService;
 import io.gateways.userservice.service.UserService;
 import lombok.Data;
@@ -58,6 +62,8 @@ public class UserResource extends Exception {
 
 	@Autowired
 	private MarketFeedService marketFeedService;
+	@Autowired
+	private StockCodesRepo stockCodesRepo;
 	
 	@GetMapping("/test")
 	public String apiTest() {
@@ -192,9 +198,10 @@ public class UserResource extends Exception {
 	}
 	
 	
-	@PutMapping("/userDeactivate/{client_id}")
-	public void userDeactivate(@PathVariable("client_id") String client_id){
-		 userService.userDeactivate(client_id);
+	@PutMapping("/updateWallet/{client_id}/{balance}")
+	public void updateWallet(@PathVariable("client_id") String client_id,
+			                   @PathVariable("balance") int balance){
+		 userService.updateWallet(client_id,balance);
 	}
 
 	public static Logger getLog() {
@@ -203,11 +210,11 @@ public class UserResource extends Exception {
 	
 	
 	@GetMapping("/getWatchlist/{username}")
-	public String getWatchlist(@PathVariable("username")String username) {
+	public ResponseEntity<List<StockCodes>> getWatchlist(@PathVariable("username")String username) {
 		//System.out.println("Watchlist Fetching");
-		List<StockDetails> std = userService.getWatchlist(username);
 		
-		return marketFeedService.getLiveData(std);
+		
+		return ResponseEntity.ok().body(userService.stockFetchData(username));
 	}
 	
 	@GetMapping("/fetchWallet/{username}")
@@ -215,6 +222,25 @@ public class UserResource extends Exception {
 
 		return ResponseEntity.ok().body(userService.getWallet(username));
 	}
+	@PutMapping("/userDeactivate/{client_id}")
+	public void userDeactivate(@PathVariable("client_id") String client_id){
+		 userService.userDeactivate(client_id);
+	}
+	 @GetMapping("/fetchBuyDetailsByUser/{username}")
+		public ResponseEntity<List<StockTransaction>> getBuydetails(@PathVariable("username")String username) {
+
+			return ResponseEntity.ok().body(userService.getBuydetails(username));
+		}
+		
+		@GetMapping("/fetchSellDetailsByUser/{username}")
+		public ResponseEntity<List<StockTransactionSell>> getSelldetails(@PathVariable("username")String username) {
+
+			return ResponseEntity.ok().body(userService.getSelldetails(username));
+		}
+		@GetMapping("/getPortfolio/{username}")
+		public String getPortfolio(@PathVariable("username")String username){
+			return userService.getPortfolio(username);
+		}
 
 }
 

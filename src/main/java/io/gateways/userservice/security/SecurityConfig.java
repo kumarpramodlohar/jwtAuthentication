@@ -45,20 +45,25 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 		//customeAuthenticationFilter.setFilterProcessesUrl("/api/test");
 		/*
 		 * http.cors(); http.csrf().disable();
-		 */
+		*/
 		
 		http.cors().and().csrf().disable();
 		http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
-		http.authorizeRequests().antMatchers("/api/login/**","/api/registration/save/**","/api/token/refresh/**","/api/signup/**").permitAll();
+		http.authorizeRequests().antMatchers("/api/login/**","/api/registration/save/**","/api/token/refresh/**","/api/signup/**","/api/test/**").permitAll();
 		http.authorizeRequests().antMatchers(HttpMethod.GET,"/api/users/**").hasAnyAuthority("ROLE_ADMIN");
-		http.authorizeRequests().antMatchers(HttpMethod.GET,"/live/market-feed/**").hasAnyAuthority("ROLE_USER");
-		http.authorizeRequests().antMatchers(HttpMethod.GET,"/live/stockName/**").hasAnyAuthority("ROLE_USER");
-		http.authorizeRequests().antMatchers(HttpMethod.GET,"/live/industry-feed/**").hasAnyAuthority("ROLE_USER");
-		http.authorizeRequests().antMatchers(HttpMethod.GET,"/api/getWatchlist/**").hasAnyAuthority("ROLE_USER");
+		http.authorizeRequests().antMatchers(HttpMethod.GET,"/live/market-feed/**").hasAnyAuthority("ROLE_USER","ROLE_ADMIN");
+		http.authorizeRequests().antMatchers(HttpMethod.GET,"/live/stockName/**").hasAnyAuthority("ROLE_USER","ROLE_ADMIN");
+		http.authorizeRequests().antMatchers(HttpMethod.GET,"/live/industry-feed/**").hasAnyAuthority("ROLE_USER","ROLE_ADMIN");
+		http.authorizeRequests().antMatchers(HttpMethod.GET,"/api/getWatchlist/**").hasAnyAuthority("ROLE_USER","ROLE_ADMIN");
 		http.authorizeRequests().antMatchers(HttpMethod.POST,"/api/addWatchlist/**").hasAnyAuthority("ROLE_USER","ROLE_ADMIN");
 		http.authorizeRequests().antMatchers(HttpMethod.GET,"/api/fetchWallet/**").hasAnyAuthority("ROLE_USER","ROLE_ADMIN");
 		http.authorizeRequests().antMatchers(HttpMethod.POST,"/registration/save/**").hasAnyAuthority("ROLE_ADMIN");
 		http.authorizeRequests().antMatchers(HttpMethod.POST,"/api/user/save/**").hasAnyAuthority("ROLE_ADMIN");
+		http.authorizeRequests().antMatchers(HttpMethod.POST,"/api/buyStock/**").hasAnyAuthority("ROLE_USER","ROLE_ADMIN");
+		http.authorizeRequests().antMatchers(HttpMethod.POST,"/api/updateWallet/**").hasAnyAuthority("ROLE_ADMIN");
+		http.authorizeRequests().antMatchers(HttpMethod.POST,"/api/fetchStockByUser/**").hasAnyAuthority("ROLE_USER","ROLE_ADMIN");	
+		http.authorizeRequests().antMatchers(HttpMethod.GET,"/live/stockCodeSearch/**").hasAnyAuthority("ROLE_USER","ROLE_ADMIN");
+		http.authorizeRequests().antMatchers(HttpMethod.GET,"/live/UserStocksQuantity/**").hasAnyAuthority("ROLE_USER","ROLE_ADMIN");
 		http.authorizeRequests().anyRequest().authenticated();
 		http.addFilter(customeAuthenticationFilter);
 		http.addFilterBefore(new CustomAuthorizationFilter(), UsernamePasswordAuthenticationFilter.class);
@@ -68,9 +73,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
 	@Bean
 	@Override
-	public AuthenticationManager authenticationManagerBean() throws Exception {
-		
-		
+	public AuthenticationManager authenticationManagerBean() throws Exception {		
 		return super.authenticationManagerBean();
 		
 	}

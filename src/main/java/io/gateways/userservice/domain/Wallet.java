@@ -22,6 +22,8 @@ private static final long serialVersionUID = 471512149777116797L;
 	private String username;
 	
 	private int balance;
+	
+	private String status;
 
 	public int getId() {
 		return id;
@@ -53,6 +55,14 @@ private static final long serialVersionUID = 471512149777116797L;
 
 	public void setBalance(int balance) {
 		this.balance = balance;
+	}
+
+	public String getStatus() {
+		return status;
+	}
+
+	public void setStatus(String status) {
+		this.status = status;
 	}
 	
 	
