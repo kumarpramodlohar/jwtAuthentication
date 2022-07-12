@@ -1,5 +1,6 @@
 package io.gateways.userservice.service;
 
+import java.text.DecimalFormat;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -11,11 +12,11 @@ import org.springframework.transaction.annotation.Transactional;
 
 import io.gateways.userservice.domain.StockCodes;
 import io.gateways.userservice.domain.StockStatus;
-import io.gateways.userservice.domain.StockTransaction;
+import io.gateways.userservice.domain.StockTransactionBuy;
 import io.gateways.userservice.domain.StockTransactionSell;
 import io.gateways.userservice.repo.StockCodesRepo;
 import io.gateways.userservice.repo.StockStatusRepo;
-import io.gateways.userservice.repo.StockTransactionRepo;
+import io.gateways.userservice.repo.StockTransactionBuyRepo;
 import io.gateways.userservice.repo.StockTransactionSellRepo;
 import io.gateways.userservice.repo.WalletRepo;
 
@@ -24,7 +25,7 @@ import io.gateways.userservice.repo.WalletRepo;
 public class StockTransactionServiceimpl implements StockTransactionService {
 
 	@Autowired
-	private StockTransactionRepo stockTransactionRepo;
+	private StockTransactionBuyRepo stockTransactionBuyRepo;
 	
 	@Autowired
 	private WalletRepo walletRepo;
@@ -34,82 +35,73 @@ public class StockTransactionServiceimpl implements StockTransactionService {
 	private StockStatusRepo stockStatusRepo;
 	@Autowired
 	private StockCodesRepo stockCodesRepo;
+
 	
 	@Override
-	public String buyStock(StockTransaction stockTransaction) {
-		// TODO Auto-generated method stub
+	public String buyStock(StockTransactionBuy stockTransaction) {
 		
-		long milliseconds = System.currentTimeMillis();
+		Long milliseconds = System.currentTimeMillis();
 		LocalDateTime Date = Instant.ofEpochMilli(milliseconds).atZone(ZoneId.systemDefault()).toLocalDateTime();
 		stockTransaction.setDate(Date);	
-		stockTransaction.setStatus("N");
-		stockTransaction.setSold_qty(0);
-		double netRate = stockTransaction.getNet_rate();
-		netRate += netRate*0.02;
+		DecimalFormat df = new DecimalFormat("###.##");
+		Double netRate = stockTransaction.getNet_rate() *0.02;
+		df.format(netRate);
+		Double finalNetAmount=stockTransaction.getNet_rate()-netRate;
 		String username = stockTransaction.getUsername();
-		int count=stockStatusRepo.getRecordCount(stockTransaction.getUsername(),stockTransaction.getSymbol());
+		Integer count=stockStatusRepo.getRecordCount(stockTransaction.getUsername(),stockTransaction.getSymbol());
 		if(count>0) {
 			stockStatusRepo.quantityUpdate(stockTransaction.getQty(), username,stockTransaction.getSymbol());
+			stockStatusRepo.totalBuyUpdate(stockTransaction.getNet_rate(), username,stockTransaction.getSymbol());
 		}else {
 			StockStatus obj = new StockStatus();
 			obj.setUsername(username);
 			obj.setSymbol(stockTransaction.getSymbol());
 			obj.setQty(stockTransaction.getQty());
+			obj.setTotal_buy_amt(stockTransaction.getNet_rate());
+			obj.setTotal_sale_amt(0.00);
 			stockStatusRepo.save(obj);
 		}		
-		stockTransactionRepo.save(stockTransaction);
-		walletRepo.walletUpdate(""+netRate, username);
+		stockTransactionBuyRepo.save(stockTransaction);
+		walletRepo.walletUpdate(""+finalNetAmount, username);
 		return "success";
 	}
-//	@Override
-//	public String sellStock(StockTransactionSell stockTransactionSell) {
-//		
-//		long milliseconds = System.currentTimeMillis();
-//		LocalDateTime Date = Instant.ofEpochMilli(milliseconds).atZone(ZoneId.systemDefault()).toLocalDateTime();
-//		stockTransactionSell.setDate(Date);
-//		double netRate = stockTransactionSell.getNet_rate();
-//		netRate -= netRate*0.02;
-//		String username = stockTransactionSell.getUsername();
-//		List<StockTransaction> buyData= stockTransactionRepo.findQtyAndRate(username);
-//		 
-//		for(StockTransaction data : buyData){
-//			StockTransaction objBuy = new StockTransaction();
-//			Double gain=stockTransactionSell.getRate() - data.getRate();
-//			String symbol=stockTransactionSell.getSymbol();
-//			//stockTransactionSell.setGain(gain);
-//			stockTransactionSellRepo.updateGain(gain,username,symbol);
-//			stockTransactionSellRepo.save(stockTransactionSell);
-//			
-//			String status="Y";
-//		
-//			Integer sold_qty=stockTransactionSell.getQty();
-//			
-//			stockTransactionRepo.updateStatusAndSoldQty(status,sold_qty,username);
-//		}
-//		stockTransactionSellRepo.save(stockTransactionSell);
-//		walletRepo.walletUpdateAdd(""+netRate, username);
-//		return "success";
-//	}
 	@Override
 	public String sellStock(StockTransactionSell stockTransactionSell) {
-		// TODO Auto-generated method stub
-		long milliseconds = System.currentTimeMillis();
+		
+		Long milliseconds = System.currentTimeMillis();
 		LocalDateTime Date = Instant.ofEpochMilli(milliseconds).atZone(ZoneId.systemDefault()).toLocalDateTime();
 		stockTransactionSell.setDate(Date);
-		double netRate = stockTransactionSell.getNet_rate();
-		netRate -= netRate*0.02;
-		String username = stockTransactionSell.getUsername();
-		stockTransactionSellRepo.save(stockTransactionSell);
-		int records = stockStatusRepo.getRecordCount(username, stockTransactionSell.getSymbol());
-		if((records-stockTransactionSell.getQty()) == 0) {
-			stockStatusRepo.deleteRecord(stockTransactionSell.getSymbol(), username);
-		}else {
-			stockStatusRepo.quantityReduce(stockTransactionSell.getQty(), username,stockTransactionSell.getSymbol());
-		}
+		DecimalFormat df = new DecimalFormat("###.##");
+		Double netRate = stockTransactionSell.getNet_rate()*0.02;
 		
-		walletRepo.walletUpdateAdd(""+netRate, username);
-		return "success";
+		df.format(netRate);
+		String username = stockTransactionSell.getUsername();
+		Double finalNetAmount=stockTransactionSell.getNet_rate()-netRate;
+		
+		
+			String stockQty=stockStatusRepo.getRecordCountForSell(username,stockTransactionSell.getSymbol());
+			Integer finalQty=Integer.valueOf(stockQty) - stockTransactionSell.getQty();
+			
+			if(finalQty >=0) {
+				stockTransactionSellRepo.save(stockTransactionSell);
+	
+				stockStatusRepo.quantityReduce(stockTransactionSell.getQty(), username,stockTransactionSell.getSymbol());
+				stockStatusRepo.totalSaleUpdate(stockTransactionSell.getNet_rate(), username,stockTransactionSell.getSymbol());
+				walletRepo.walletUpdateAdd(""+finalNetAmount, username);
+			}
+		
+			/*
+			 * if(finalQty < 0) {
+			 * 
+			 * return "faield"; }
+			 */
+			
+
+		
+	return "success";
 	}
+	
+
 	@Override
 	public List<StockStatus> getStockByUser(String username) {
 		// TODO Auto-generated method stub

@@ -12,22 +12,25 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "stock_transaction")
+@Table(name = "stock_transaction_buy")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class StockTransaction {
+public class StockTransactionBuy {
 
 	@Id
 	@GeneratedValue
-	private int trn_id;
+	private Integer trn_id;
 	private String symbol;
 	private String username;
-	private int qty;
-	private double rate;
-	private double net_rate;
+	private Integer qty;
+	private Double rate;
+	private Double net_rate;
 	private LocalDateTime date;
-	private String status;
-	private int sold_qty;
+	//private String status;
+	//private Integer sold_qty;
+	//private Integer sale_trn_id;
+	
+	
 	
 }

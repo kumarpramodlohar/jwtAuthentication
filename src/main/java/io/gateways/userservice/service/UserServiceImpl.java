@@ -29,7 +29,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import io.gateways.userservice.domain.Role;
 import io.gateways.userservice.domain.StockCodes;
 import io.gateways.userservice.domain.StockDetails;
-import io.gateways.userservice.domain.StockTransaction;
+import io.gateways.userservice.domain.StockTransactionBuy;
 import io.gateways.userservice.domain.StockTransactionSell;
 import io.gateways.userservice.domain.User;
 import io.gateways.userservice.domain.Wallet;
@@ -37,7 +37,7 @@ import io.gateways.userservice.domain.WatchlistBean;
 import io.gateways.userservice.repo.RoleRepo;
 import io.gateways.userservice.repo.SerialUpdateRepo;
 import io.gateways.userservice.repo.StockCodesRepo;
-import io.gateways.userservice.repo.StockTransactionRepo;
+import io.gateways.userservice.repo.StockTransactionBuyRepo;
 import io.gateways.userservice.repo.StockTransactionSellRepo;
 import io.gateways.userservice.repo.UserRepo;
 import io.gateways.userservice.repo.UserdetailsRepo;
@@ -79,7 +79,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 	private WatchlistRepo watchlistRepo;
 
 	@Autowired
-	private StockTransactionRepo stockTransactionRepo;
+	private StockTransactionBuyRepo stockTransactionRepo;
 	
 	@Autowired
 	private StockTransactionSellRepo stockTransactionSellRepo;
@@ -225,9 +225,9 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 			
 			
 			User localUser = userRepo.findByUsername(user.getUsername());
-			System.out.println("User details ==============="+localUser.getName());
-			System.out.println("User details ==============="+localUser.getUsername());
-			System.out.println("User details ==============="+localUser.getPassword());
+			//System.out.println("User details ==============="+localUser.getName());
+			//System.out.println("User details ==============="+localUser.getUsername());
+			//System.out.println("User details ==============="+localUser.getPassword());
 			userwallet.setUsername(localUser.getUsername());
 			userwallet.setBalance(20000);
 			userwallet.setClient_id(client_id);
@@ -266,8 +266,16 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 	public String addWatchlist(WatchlistBean watchlistBean) {
 		// TODO Auto-generated method stub
 		watchlistBean.setStatus("Y");
+		String message = "";
+		WatchlistBean check = null;
+		check = watchlistRepo.getWatchListByUsernameSymbol(watchlistBean.getUsername(), watchlistBean.getSymbol());
+		if(check == null) {
 		watchlistRepo.save(watchlistBean);
-		return "success";
+		message = "success";
+		}else {
+			message = "Already Exists";
+		}
+		return message;
 	}
 
 	@Override
@@ -293,7 +301,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 		userRepo.updateWallet(client_id,balance);
 	}
 	 @Override
-		public List<StockTransaction> getBuydetails(String username) {
+		public List<StockTransactionBuy> getBuydetails(String username) {
 			log.info("Fetching Buy Details user {} ", username);
 
 			return stockTransactionRepo.findBuydetailsByUsername(username);

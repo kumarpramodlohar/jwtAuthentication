@@ -17,8 +17,10 @@ import javax.persistence.Table;
 	public class StockStatus {
 		@Id
 		@GeneratedValue
-		private int id;
+		private Integer id;
 		private String username;
 		private String symbol; 
-		private int qty;
+		private Integer qty;
+		private Double total_buy_amt;
+		private Double total_sale_amt;
 }

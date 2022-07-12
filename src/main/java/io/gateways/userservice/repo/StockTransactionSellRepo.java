@@ -19,8 +19,8 @@ public interface StockTransactionSellRepo extends JpaRepository<StockTransaction
 	Integer getTotalSold(@Param("username") String username);
 	
 	@Modifying
-	@Query(value = "update onlinetradingdb.stock_transaction_sale t1 set t1.gain=?1 where t1.username=?2 and t1.symbol=?3", nativeQuery=true)
-	int updateGain(Double gain, String username,String symbol);
+	@Query(value = "update onlinetradingdb.stock_transaction_sale t1 set t1.gain=?1 where t1.username=?2 and t1.symbol=?3 and t1.trn_id=?4", nativeQuery=true)
+	int updateGain(Double gain, String username,String symbol,Integer trn_id);
 	
 	
 }

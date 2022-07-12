@@ -46,7 +46,7 @@ public class MarketFeedService {
 //		@Scheduled(fixedRate = 1000)
 		public void save() throws Exception {
 			
-			System.out.println("Getting Called every 1 second");
+			//System.out.println("Getting Called every 1 second");
 			AppConfig config = new AppConfig();
 			RestClient apis = new RestClient(config);
 			config.setAppName("5P58598283");
@@ -93,7 +93,7 @@ public class MarketFeedService {
 			
 			
 			
-			System.out.println("response ================"+response.body().string());
+			//System.out.println("response ================"+response.body().string());
 
 			
 

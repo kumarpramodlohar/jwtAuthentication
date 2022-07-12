@@ -67,6 +67,7 @@ public class LiveDataController {
 	
 	String marketFeed=null;
 	String industryFeed=null;
+	String niftyData;
 	
 	String baseToken="eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJzdWJoYW1heSIsInJvbGVzIjpbIlJPTEVfVVNFUiJdLCJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjgwODAvYXBpL2xvZ2luIiwiZXhwIjoxNjQ1NDUwNjgyfQ.56O-U_I1biR55Q-D-a9YfRSD1QU-wRWanmvooxl1xjY";
 			//"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJzdWJoYW1heSIsInJvbGVzIjpbIlJPTEVfVVNFUiJdLCJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjgwODAvYXBpL2xvZ2luIiwiZXhwIjoxNjQ1NDQ5Nzk2fQ.LLovuOVF-XbWaastYI4dpuW_qELTkYi4dpbH4yd6jkE";
@@ -414,6 +415,74 @@ public class LiveDataController {
 		
 		
 	}
+	
+	@GetMapping("/NiftyDatas")
+	public String fetchNiftyController() {
+		return niftyData;
+	}
+	
+	@Scheduled(fixedRate = 300000)
+	public String getNiftyDatas()throws IOException, ParseException{
+		
+		AppConfig config = new AppConfig();
+		RestClient apis = new RestClient(config);
+		config.setAppName("5P53826199");
+		config.setAppVer("1.0");
+		config.setOsName("Windows");
+		config.setEncryptKey("h8xY1TXXWSagHZstoBJxlMOdmvgl1vIX");
+		config.setKey("1DrhZDEJwAenvargRisFm5LqxNFAVWBr");
+		config.setLoginId("53826199");
+		config.setUserId("r6Lg1tHWcHP");
+		config.setPassword("KUEPKQb4Ynj");
+		
+		JSONObject obj3 = new JSONObject();
+		List<JSONObject> ordStatusListReqObj = new ArrayList<JSONObject>();
+		
+		JSONObject ordStatusReqObj = new JSONObject();
+		
+		ordStatusReqObj.put("Exch", "N");
+		ordStatusReqObj.put("ExchType", "C");
+		ordStatusReqObj.put("Symbol", "NIFTY");
+		ordStatusReqObj.put("Expiry", "");
+		ordStatusReqObj.put("StrikePrice", "0");
+		ordStatusReqObj.put("OptionType", "");
+		ordStatusListReqObj.add(ordStatusReqObj);
+		
+		JSONObject ordStatusReqObj2 = new JSONObject();
+		
+		ordStatusReqObj2.put("Exch", "B");
+		ordStatusReqObj2.put("ExchType", "C");
+		ordStatusReqObj2.put("Symbol", "SENSEX");
+		ordStatusReqObj2.put("Expiry", "");
+		ordStatusReqObj2.put("StrikePrice", "0");
+		ordStatusReqObj2.put("OptionType", "");
+		ordStatusListReqObj.add(ordStatusReqObj2);
+		
+		
+		obj3.put("Count", 2);
+		obj3.put("ClientLoginType", 0);
+		obj3.put("LastRequestTime", "/Date(1645867288)/");
+		obj3.put("RefreshRate", "H");
+		obj3.put("MarketFeedData", ordStatusListReqObj);
+
+		Response response = apis.MarketFeed(obj3);
+		
+		String returnResponse = response.body().string();
+				 
+		JSONParser parser = new JSONParser(); 
+		JSONObject objectjson = (JSONObject) parser.parse(returnResponse);
+		
+		
+		JSONObject jsonobject2 = (JSONObject) objectjson.get("body");
+		 niftyData = jsonobject2.get("Data").toString();
+		System.out.println("New share ..........................."+niftyData);		
+		return niftyData;
+
+		
+		
+	}
+	
+	
 	@GetMapping("/stockName")
 	public ResponseEntity<List<StockDetails>> getStockNames() {		
 		return ResponseEntity.ok().body(stockRepo.findAll());

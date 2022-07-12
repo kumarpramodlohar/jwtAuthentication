@@ -16,7 +16,7 @@ public interface StockStatusRepo extends JpaRepository<StockStatus, Long> {
 	List<StockStatus> getStockByUser(@Param("username") String username);
 	
 	@Query(value = "select count(*) from stock_status a where a.username=?1 and a.symbol= ?2",nativeQuery = true)
-	int getRecordCount(@Param("username") String username, @Param("symbol")String symbol);
+	Integer getRecordCount(@Param("username") String username, @Param("symbol")String symbol);
 		
 	@Modifying
 	@Query(value = "update stock_status s set s.qty =s.qty+?1 where  s.username= ?2 and s.symbol=?3",nativeQuery = true)
@@ -24,7 +24,7 @@ public interface StockStatusRepo extends JpaRepository<StockStatus, Long> {
 	
 	@Modifying
 	@Query(value="update stock_status s set s.qty =s.qty-?1 where  s.username= ?2 and s.symbol=?3",nativeQuery = true)
-	void quantityReduce(@Param("qty") int qty,@Param("username")String username,@Param("symbol")String symbol);
+	void quantityReduce(@Param("qty") Integer qty,@Param("username")String username,@Param("symbol")String symbol);
 	
 	@Modifying
 	@Query(value="delete from stock_status s where s.symbol =?1 and s.username =?2",nativeQuery = true)
@@ -32,5 +32,15 @@ public interface StockStatusRepo extends JpaRepository<StockStatus, Long> {
 	
 	@Query(value = "select qty from stock_status a where a.username=?1 and a.symbol= ?2",nativeQuery = true)
 	String getRecordCountForSell(@Param("username") String username, @Param("symbol")String symbol);
+	
+	@Modifying
+	@Query(value = "update stock_status s set s.total_buy_amt =s.total_buy_amt+?1 where  s.username= ?2 and s.symbol=?3",nativeQuery = true)
+	void totalBuyUpdate(@Param("total_buy_amt") Double total_buy_amt,@Param("username")String username,@Param("symbol")String symbol);
+	
+	@Modifying
+	@Query(value = "update stock_status s set s.total_sale_amt =s.total_sale_amt+?1 where  s.username= ?2 and s.symbol=?3",nativeQuery = true)
+	void totalSaleUpdate(@Param("total_buy_amt") Double total_sale_amt,@Param("username")String username,@Param("symbol")String symbol);
+	
+	
 	
 }

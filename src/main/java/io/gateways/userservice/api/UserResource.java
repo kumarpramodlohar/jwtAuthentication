@@ -38,7 +38,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import io.gateways.userservice.domain.Role;
 import io.gateways.userservice.domain.StockCodes;
 import io.gateways.userservice.domain.StockDetails;
-import io.gateways.userservice.domain.StockTransaction;
+import io.gateways.userservice.domain.StockTransactionBuy;
 import io.gateways.userservice.domain.StockTransactionSell;
 import io.gateways.userservice.domain.User;
 import io.gateways.userservice.domain.UserDetails;
@@ -129,7 +129,7 @@ public class UserResource extends Exception {
 
 		// return ResponseEntity.created(uri).body(userService.saveUser(user));
 		
-		System.out.println("Hiiiiiiii...................");
+		//System.out.println("Hiiiiiiii...................");
 
 		return ResponseEntity.ok().body(userService.signup(user));
 	}
@@ -137,11 +137,11 @@ public class UserResource extends Exception {
 	
 	@PostMapping("/addWatchlist")
 	public String addWatchlist(@RequestBody WatchlistBean watchlistBean) {		
-		System.out.println("Hiiiiii222222...................");
+		//System.out.println("Hiiiiii222222...................");
 		
-		userService.addWatchlist(watchlistBean);
+		return userService.addWatchlist(watchlistBean);
 		
-		return "Success";
+		
 	}
 
 	@GetMapping("/token/refresh")
@@ -227,7 +227,7 @@ public class UserResource extends Exception {
 		 userService.userDeactivate(client_id);
 	}
 	 @GetMapping("/fetchBuyDetailsByUser/{username}")
-		public ResponseEntity<List<StockTransaction>> getBuydetails(@PathVariable("username")String username) {
+		public ResponseEntity<List<StockTransactionBuy>> getBuydetails(@PathVariable("username")String username) {
 
 			return ResponseEntity.ok().body(userService.getBuydetails(username));
 		}

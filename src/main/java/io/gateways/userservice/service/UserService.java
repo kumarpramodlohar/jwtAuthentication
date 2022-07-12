@@ -5,7 +5,7 @@ import java.util.List;
 import io.gateways.userservice.domain.Role;
 import io.gateways.userservice.domain.StockCodes;
 import io.gateways.userservice.domain.StockDetails;
-import io.gateways.userservice.domain.StockTransaction;
+import io.gateways.userservice.domain.StockTransactionBuy;
 import io.gateways.userservice.domain.StockTransactionSell;
 import io.gateways.userservice.domain.User;
 import io.gateways.userservice.domain.UserDetails;
@@ -38,7 +38,7 @@ public interface UserService {
 
 	void updateWallet(String client_id, int balance);
 	
-	 List<StockTransaction> getBuydetails(String username);
+	 List<StockTransactionBuy> getBuydetails(String username);
 
 List<StockTransactionSell> getSelldetails(String username);
 

@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import io.gateways.userservice.domain.StockDetails;
 import io.gateways.userservice.domain.StockStatus;
-import io.gateways.userservice.domain.StockTransaction;
+import io.gateways.userservice.domain.StockTransactionBuy;
 import io.gateways.userservice.domain.StockTransactionSell;
 import io.gateways.userservice.domain.Wallet;
 import io.gateways.userservice.service.StockTransactionService;
@@ -28,13 +28,16 @@ public class Transaction  {
 	private StockTransactionService stockTransactionService;
 	
 	@PostMapping("/buyStock")
-	public String buyStock(@RequestBody StockTransaction stockTransaction ) {
+	public String buyStock(@RequestBody StockTransactionBuy stockTransaction ) {
+		System.out.println("in buy stock controller.....");
         stockTransactionService.buyStock(stockTransaction);		
 		return "Success";
 		
 	}
 	@PostMapping("/sellStock")
+	
 	public String sellStock(@RequestBody StockTransactionSell stockTransactionSell ) {
+		System.out.println("in selll stock controller........");
         stockTransactionService.sellStock(stockTransactionSell);		
 		return "Success";
 		

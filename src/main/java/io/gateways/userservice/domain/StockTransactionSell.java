@@ -20,12 +20,13 @@ public class StockTransactionSell {
 
 	@Id
 	@GeneratedValue
-	private int id;
+	private Integer trn_id;
 	private String symbol;
 	private String username;
-	private int qty;
-	private double rate;
-	private double net_rate;
+	private Integer qty;
+	private Double rate;
+	private Double net_rate;
 	private LocalDateTime date;
-	private double gain;
+	//private Double gain;
+	//private Integer buy_trn_id;
 }

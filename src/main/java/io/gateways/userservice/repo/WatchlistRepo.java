@@ -12,4 +12,7 @@ public interface WatchlistRepo extends JpaRepository<WatchlistBean, Long> {
 	@Modifying
 	@Query(value = "select * from user_watchlist where user = ?1",nativeQuery = true)
 	List<WatchlistBean> getWatchList(String username);
+	
+	@Query(value = "select * from user_watchlist where username = ?1 and symbol=?2",nativeQuery = true)
+	WatchlistBean getWatchListByUsernameSymbol(String username,String symbol);
 }
