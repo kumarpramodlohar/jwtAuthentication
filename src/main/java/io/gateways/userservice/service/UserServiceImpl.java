@@ -37,6 +37,7 @@ import io.gateways.userservice.domain.WatchlistBean;
 import io.gateways.userservice.repo.RoleRepo;
 import io.gateways.userservice.repo.SerialUpdateRepo;
 import io.gateways.userservice.repo.StockCodesRepo;
+import io.gateways.userservice.repo.StockStatusRepo;
 import io.gateways.userservice.repo.StockTransactionBuyRepo;
 import io.gateways.userservice.repo.StockTransactionSellRepo;
 import io.gateways.userservice.repo.UserRepo;
@@ -60,6 +61,8 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 	@Autowired
 	private UserdetailsRepo userdetailsrepo;
 	
+	@Autowired
+	private StockStatusRepo stockStatusRepo;
 	
 	@Autowired
 	private SerialUpdateRepo serialUpdateRepo;
@@ -319,8 +322,8 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 			// TODO Auto-generated method stub
 			HashMap<String,Integer> map = new HashMap<String,Integer>();
 			
-			map.put("TotalBought", stockTransactionRepo.getTotalSpent(username));
-			map.put("TotalSold", stockTransactionSellRepo.getTotalSold(username));
+			map.put("TotalBought", stockStatusRepo.getTotalBuy(username));
+			map.put("TotalSold", stockStatusRepo.getTotalSold(username));
 			String json = "";
 			try {
 				 json = new ObjectMapper().writeValueAsString(map);

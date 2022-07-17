@@ -64,6 +64,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 		http.authorizeRequests().antMatchers(HttpMethod.POST,"/api/fetchStockByUser/**").hasAnyAuthority("ROLE_USER","ROLE_ADMIN");	
 		http.authorizeRequests().antMatchers(HttpMethod.GET,"/live/stockCodeSearch/**").hasAnyAuthority("ROLE_USER","ROLE_ADMIN");
 		http.authorizeRequests().antMatchers(HttpMethod.GET,"/live/UserStocksQuantity/**").hasAnyAuthority("ROLE_USER","ROLE_ADMIN");
+		
+		http.authorizeRequests().antMatchers(HttpMethod.GET,"/live/NiftyDatas/**").hasAnyAuthority("ROLE_USER","ROLE_ADMIN");
 		http.authorizeRequests().anyRequest().authenticated();
 		http.addFilter(customeAuthenticationFilter);
 		http.addFilterBefore(new CustomAuthorizationFilter(), UsernamePasswordAuthenticationFilter.class);

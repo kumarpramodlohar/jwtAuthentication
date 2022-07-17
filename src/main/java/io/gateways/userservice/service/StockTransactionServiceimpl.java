@@ -46,7 +46,7 @@ public class StockTransactionServiceimpl implements StockTransactionService {
 		DecimalFormat df = new DecimalFormat("###.##");
 		Double netRate = stockTransaction.getNet_rate() *0.02;
 		df.format(netRate);
-		Double finalNetAmount=stockTransaction.getNet_rate()-netRate;
+		Double finalNetAmount=stockTransaction.getNet_rate()+netRate;
 		String username = stockTransaction.getUsername();
 		Integer count=stockStatusRepo.getRecordCount(stockTransaction.getUsername(),stockTransaction.getSymbol());
 		if(count>0) {
@@ -76,7 +76,7 @@ public class StockTransactionServiceimpl implements StockTransactionService {
 		
 		df.format(netRate);
 		String username = stockTransactionSell.getUsername();
-		Double finalNetAmount=stockTransactionSell.getNet_rate()-netRate;
+		Double finalNetAmount=stockTransactionSell.getNet_rate()+netRate;
 		
 		
 			String stockQty=stockStatusRepo.getRecordCountForSell(username,stockTransactionSell.getSymbol());

@@ -15,8 +15,8 @@ public interface StockTransactionBuyRepo extends JpaRepository<StockTransactionB
 	 @Query(value = "select * from stock_transaction_buy u where u.username= ?1 ",nativeQuery = true)
 	List<StockTransactionBuy> findBuydetailsByUsername(@Param("username") String username);
 	 
-	 @Query(value = "SELECT SUM(net_rate) FROM stock_transaction_buy s where s.username=?1",nativeQuery = true)
-	 Integer getTotalSpent(@Param("username") String username);
+//	 @Query(value = "SELECT SUM(net_rate) FROM stock_transaction_buy s where s.username=?1",nativeQuery = true)
+//	 Integer getTotalSpent(@Param("username") String username);
 	
 	 @Query(value = "SELECT * FROM onlinetradingdb.stock_transaction_buy tt where tt.status='N' or tt.status='PS' and tt.username=?1 and tt.symbol=?2  order by tt.date asc", nativeQuery = true)
 		List<StockTransactionBuy> findQtyAndRate(String userName,String symbol);

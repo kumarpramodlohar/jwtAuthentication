@@ -12,7 +12,7 @@ import io.gateways.userservice.domain.StockStatus;
 
 @Repository
 public interface StockStatusRepo extends JpaRepository<StockStatus, Long> {
-	@Query(value = "select * from stock_status u where u.username= ?1 ",nativeQuery = true)
+	@Query(value = "select * from stock_status u where u.username= ?1 and u.qty!=0 ",nativeQuery = true)
 	List<StockStatus> getStockByUser(@Param("username") String username);
 	
 	@Query(value = "select count(*) from stock_status a where a.username=?1 and a.symbol= ?2",nativeQuery = true)
@@ -40,6 +40,12 @@ public interface StockStatusRepo extends JpaRepository<StockStatus, Long> {
 	@Modifying
 	@Query(value = "update stock_status s set s.total_sale_amt =s.total_sale_amt+?1 where  s.username= ?2 and s.symbol=?3",nativeQuery = true)
 	void totalSaleUpdate(@Param("total_buy_amt") Double total_sale_amt,@Param("username")String username,@Param("symbol")String symbol);
+	
+	 @Query(value = "SELECT SUM(total_buy_amt) FROM stock_status s where s.username=?1",nativeQuery = true)
+	 Integer getTotalBuy(@Param("username") String username);
+	 
+	@Query(value = "SELECT SUM(total_sale_amt) FROM stock_status s where s.username=?1",nativeQuery = true)
+	Integer getTotalSold(@Param("username") String username);
 	
 	
 	
